@@ -85,6 +85,12 @@
 
         </li>
 
+        <li>
+
+            <span class="apidocSignatureSpan">object <span class="apidocSignatureSpan">node-expat.</span>node_expat</span>
+
+        </li>
+
     </ol></li>
 
     <li class="apidocModuleLi"><a href="#apidoc.module.node-expat.Parser">module node-expat.Parser</a><ol>
@@ -257,6 +263,28 @@
 
     </ol></li>
 
+    <li class="apidocModuleLi"><a href="#apidoc.module.node-expat.node_expat">module node-expat.node_expat</a><ol>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.node-expat.node_expat.Parser">
+            function <span class="apidocSignatureSpan">node-expat.node_expat.</span>Parser
+            <span class="apidocSignatureSpan">(encoding)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.node-expat.node_expat.createParser">
+            function <span class="apidocSignatureSpan">node-expat.node_expat.</span>createParser
+            <span class="apidocSignatureSpan">(cb)</span>
+            </a>
+
+        </li>
+
+    </ol></li>
+
 </ol></div>
 
 <div class="apidocSectionDiv">
@@ -316,6 +344,8 @@ parser.on(&#x27;endElement&#x27;, function (name) {
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">n/a</pre></li>
     </ul>
+
+
 
 
 
@@ -393,7 +423,23 @@ parser.on(&#x27;endElement&#x27;, function (name) {
     <li>description and source-code<pre class="apidocCodePre">_getNewParser = function () {
   this.parser = new expat.Parser(this.encoding)
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+
+var util = require(&#x27;util&#x27;)
+var expat = require(&#x27;bindings&#x27;)(&#x27;node_expat&#x27;)
+var Stream = require(&#x27;stream&#x27;).Stream
+
+var Parser = function (encoding) {
+  this.encoding = encoding
+  this.<span class="apidocCodeKeywordSpan">_getNewParser</span>()
+  this.parser.emit = this.emit.bind(this)
+
+  // Stream API
+  this.writable = true
+  this.readable = true
+}
+util.inherits(Parser, Stream)
+...</pre></li>
     </ul>
 
 
@@ -409,7 +455,23 @@ parser.on(&#x27;endElement&#x27;, function (name) {
   this.parser.stop()
   this.end()
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+
+Parser.prototype.destroy = function () {
+this.parser.stop()
+this.end()
+}
+
+Parser.prototype.destroySoon = function () {
+this.<span class="apidocCodeKeywordSpan">destroy</span>()
+}
+
+Parser.prototype.write = function (data) {
+var error, result
+try {
+  result = this.parse(data)
+  if (!result) {
+...</pre></li>
     </ul>
 
 
@@ -454,7 +516,23 @@ parser.on(&#x27;endElement&#x27;, function (name) {
   }
   this.emit(&#x27;close&#x27;)
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+}
+Parser.prototype.resume = function () {
+  return this.parser.resume()
+}
+
+Parser.prototype.destroy = function () {
+  this.parser.stop()
+  this.<span class="apidocCodeKeywordSpan">end</span>()
+}
+
+Parser.prototype.destroySoon = function () {
+  this.destroy()
+}
+
+Parser.prototype.write = function (data) {
+...</pre></li>
     </ul>
 
 
@@ -469,7 +547,23 @@ parser.on(&#x27;endElement&#x27;, function (name) {
     <li>description and source-code<pre class="apidocCodePre">getCurrentByteIndex = function () {
   return this.parser.getCurrentByteIndex()
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+Parser.prototype.getCurrentLineNumber = function () {
+return this.parser.getCurrentLineNumber()
+}
+Parser.prototype.getCurrentColumnNumber = function () {
+return this.parser.getCurrentColumnNumber()
+}
+Parser.prototype.getCurrentByteIndex = function () {
+return this.parser.<span class="apidocCodeKeywordSpan">getCurrentByteIndex</span>()
+}
+
+exports.Parser = Parser
+
+exports.createParser = function (cb) {
+var parser = new Parser()
+if (cb) {
+...</pre></li>
     </ul>
 
 
@@ -484,7 +578,22 @@ parser.on(&#x27;endElement&#x27;, function (name) {
     <li>description and source-code<pre class="apidocCodePre">getCurrentColumnNumber = function () {
   return this.parser.getCurrentColumnNumber()
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+Parser.prototype.reset = function () {
+  return this.parser.reset()
+}
+Parser.prototype.getCurrentLineNumber = function () {
+  return this.parser.getCurrentLineNumber()
+}
+Parser.prototype.getCurrentColumnNumber = function () {
+  return this.parser.<span class="apidocCodeKeywordSpan">getCurrentColumnNumber</span>()
+}
+Parser.prototype.getCurrentByteIndex = function () {
+  return this.parser.getCurrentByteIndex()
+}
+
+exports.Parser = Parser
+...</pre></li>
     </ul>
 
 
@@ -499,7 +608,23 @@ parser.on(&#x27;endElement&#x27;, function (name) {
     <li>description and source-code<pre class="apidocCodePre">getCurrentLineNumber = function () {
   return this.parser.getCurrentLineNumber()
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+  this.emit(&#x27;close&#x27;)
+}
+
+Parser.prototype.reset = function () {
+  return this.parser.reset()
+}
+Parser.prototype.getCurrentLineNumber = function () {
+  return this.parser.<span class="apidocCodeKeywordSpan">getCurrentLineNumber</span>()
+}
+Parser.prototype.getCurrentColumnNumber = function () {
+  return this.parser.getCurrentColumnNumber()
+}
+Parser.prototype.getCurrentByteIndex = function () {
+  return this.parser.getCurrentByteIndex()
+}
+...</pre></li>
     </ul>
 
 
@@ -514,7 +639,23 @@ parser.on(&#x27;endElement&#x27;, function (name) {
     <li>description and source-code<pre class="apidocCodePre">getError = function () {
   return this.parser.getError()
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+}
+
+Parser.prototype.setUnknownEncoding = function (map, convert) {
+  return this.parser.setUnknownEncoding(map, convert)
+}
+
+Parser.prototype.getError = function () {
+  return this.parser.<span class="apidocCodeKeywordSpan">getError</span>()
+}
+Parser.prototype.stop = function () {
+  return this.parser.stop()
+}
+Parser.prototype.pause = function () {
+  return this.stop()
+}
+...</pre></li>
     </ul>
 
 
@@ -529,7 +670,22 @@ parser.on(&#x27;endElement&#x27;, function (name) {
     <li>description and source-code<pre class="apidocCodePre">parse = function (buf, isFinal) {
   return this.parser.parse(buf, isFinal)
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+util.inherits(Parser, Stream)
+
+Parser.prototype._getNewParser = function () {
+  this.parser = new expat.Parser(this.encoding)
+}
+
+Parser.prototype.parse = function (buf, isFinal) {
+  return this.parser.<span class="apidocCodeKeywordSpan">parse</span>(buf, isFinal)
+}
+
+Parser.prototype.setEncoding = function (encoding) {
+  this.encoding = encoding
+  return this.parser.setEncoding(this.encoding)
+}
+...</pre></li>
     </ul>
 
 
@@ -559,7 +715,23 @@ parser.on(&#x27;endElement&#x27;, function (name) {
     <li>description and source-code<pre class="apidocCodePre">reset = function () {
   return this.parser.reset()
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+  } else {
+    this.emit(&#x27;error&#x27;, error)
+  }
+  this.emit(&#x27;close&#x27;)
+}
+
+Parser.prototype.reset = function () {
+  return this.parser.<span class="apidocCodeKeywordSpan">reset</span>()
+}
+Parser.prototype.getCurrentLineNumber = function () {
+  return this.parser.getCurrentLineNumber()
+}
+Parser.prototype.getCurrentColumnNumber = function () {
+  return this.parser.getCurrentColumnNumber()
+}
+...</pre></li>
     </ul>
 
 
@@ -574,7 +746,22 @@ parser.on(&#x27;endElement&#x27;, function (name) {
     <li>description and source-code<pre class="apidocCodePre">resume = function () {
   return this.parser.resume()
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+Parser.prototype.stop = function () {
+  return this.parser.stop()
+}
+Parser.prototype.pause = function () {
+  return this.stop()
+}
+Parser.prototype.resume = function () {
+  return this.parser.<span class="apidocCodeKeywordSpan">resume</span>()
+}
+
+Parser.prototype.destroy = function () {
+  this.parser.stop()
+  this.end()
+}
+...</pre></li>
     </ul>
 
 
@@ -590,7 +777,23 @@ parser.on(&#x27;endElement&#x27;, function (name) {
   this.encoding = encoding
   return this.parser.setEncoding(this.encoding)
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+
+Parser.prototype.parse = function (buf, isFinal) {
+  return this.parser.parse(buf, isFinal)
+}
+
+Parser.prototype.setEncoding = function (encoding) {
+  this.encoding = encoding
+  return this.parser.<span class="apidocCodeKeywordSpan">setEncoding</span>(this.encoding)
+}
+
+Parser.prototype.setUnknownEncoding = function (map, convert) {
+  return this.parser.setUnknownEncoding(map, convert)
+}
+
+Parser.prototype.getError = function () {
+...</pre></li>
     </ul>
 
 
@@ -605,7 +808,23 @@ parser.on(&#x27;endElement&#x27;, function (name) {
     <li>description and source-code<pre class="apidocCodePre">setUnknownEncoding = function (map, convert) {
   return this.parser.setUnknownEncoding(map, convert)
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+
+Parser.prototype.setEncoding = function (encoding) {
+this.encoding = encoding
+return this.parser.setEncoding(this.encoding)
+}
+
+Parser.prototype.setUnknownEncoding = function (map, convert) {
+return this.parser.<span class="apidocCodeKeywordSpan">setUnknownEncoding</span>(map, convert)
+}
+
+Parser.prototype.getError = function () {
+return this.parser.getError()
+}
+Parser.prototype.stop = function () {
+return this.parser.stop()
+...</pre></li>
     </ul>
 
 
@@ -620,7 +839,23 @@ parser.on(&#x27;endElement&#x27;, function (name) {
     <li>description and source-code<pre class="apidocCodePre">stop = function () {
   return this.parser.stop()
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+  return this.parser.setUnknownEncoding(map, convert)
+}
+
+Parser.prototype.getError = function () {
+  return this.parser.getError()
+}
+Parser.prototype.stop = function () {
+  return this.parser.<span class="apidocCodeKeywordSpan">stop</span>()
+}
+Parser.prototype.pause = function () {
+  return this.stop()
+}
+Parser.prototype.resume = function () {
+  return this.parser.resume()
+}
+...</pre></li>
     </ul>
 
 
@@ -665,6 +900,67 @@ parser.on(&#x27;endElement&#x27;, function (name) {
 
 ## API
 ...</pre></li>
+    </ul>
+
+
+</div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.node-expat.node_expat" id="apidoc.module.node-expat.node_expat">module node-expat.node_expat</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.node-expat.node_expat.Parser" id="apidoc.element.node-expat.node_expat.Parser">
+        function <span class="apidocSignatureSpan">node-expat.node_expat.</span>Parser
+        <span class="apidocSignatureSpan">(encoding)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">Parser = function (encoding) {
+  this.encoding = encoding
+  this._getNewParser()
+  this.parser.emit = this.emit.bind(this)
+
+  // Stream API
+  this.writable = true
+  this.readable = true
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+Important events emitted by a parser:
+
+```javascript
+(function () {
+&#x22;use strict&#x22;;
+
+var expat = require(&#x27;node-expat&#x27;)
+var parser = new expat.<span class="apidocCodeKeywordSpan">Parser</span>(&#x27;UTF-8&#x27;)
+
+parser.on(&#x27;startElement&#x27;, function (name, attrs) {
+  console.log(name, attrs)
+})
+
+parser.on(&#x27;endElement&#x27;, function (name) {
+  console.log(name)
+...</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.node-expat.node_expat.createParser" id="apidoc.element.node-expat.node_expat.createParser">
+        function <span class="apidocSignatureSpan">node-expat.node_expat.</span>createParser
+        <span class="apidocSignatureSpan">(cb)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">createParser = function (cb) {
+  var parser = new Parser()
+  if (cb) {
+    parser.on(&#x27;startElement&#x27;, cb)
+  }
+  return parser
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
     </ul>
 
 
